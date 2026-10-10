@@ -1,0 +1,19 @@
+# Cartographie des traitements
+
+Base de travail pour le registre des activités de traitement (article 30 du RGPD). Les bases juridiques et durées sont **à valider** par Hugo, avec un conseil si besoin. Le rôle de SpendEdge est indiqué traitement par traitement : il n'est pas le même partout.
+
+| Traitement | État | Finalité | Données | Personnes concernées | Destinataires | Durée envisagée | Base juridique (à valider) | Rôle de SpendEdge |
+|---|---|---|---|---|---|---|---|---|
+| Comptes et authentification | En place | Donner accès au service | E-mail, mot de passe chiffré (Supabase Auth), nom facultatif, statut, entreprise et rôle, CGU acceptées (version et date) | Utilisateurs | Équipe SpendEdge habilitée, Supabase | Durée du compte, puis anonymisation 30 jours après la demande de suppression | Exécution du contrat | Responsable du traitement |
+| Demandes de démonstration | En place | Traiter la demande, recontacter | Nom, e-mail, entreprise, fonction, secteur, taille, téléphone, besoin ; empreinte IP 30 jours | Prospects | Équipe SpendEdge, Supabase | 3 ans après le dernier échange | Mesures précontractuelles ou intérêt légitime | Responsable du traitement |
+| Limitation des abus | En place | Sécurité (anti-robot, force brute) | Empreintes non réversibles d'IP et d'e-mail | Visiteurs, utilisateurs | Aucun (base) | 2 jours | Intérêt légitime (sécurité) | Responsable du traitement |
+| Journal d'audit | En place | Traçabilité des actions d'administration | Identifiant de l'admin, action, objet, date | Administrateurs, personnes concernées par l'action | Administrateurs | À définir (pas de purge en V1) | Intérêt légitime, obligation de sécurité | Responsable du traitement |
+| Demandes d'exercice des droits | En place | Répondre aux demandes RGPD | E-mail du demandeur, type, dates, trace du traitement | Toute personne | Administrateurs | 5 ans après clôture (à valider) | Obligation légale | Responsable du traitement |
+| Cookie de choix de consentement | En place | Mémoriser les choix | Choix par finalité, date | Visiteurs | Aucun | 6 mois | Strictement nécessaire | Responsable du traitement |
+| Contacts fournisseurs des clients | Futur | Consulter les fournisseurs pour le client | Nom, e-mail, téléphone des interlocuteurs | Salariés des fournisseurs | Client, SpendEdge | Durée de l'abonnement du client | À déterminer | Sous-traitant du client (probable) |
+| Demandes d'achat et historiques | Futur | Exécuter le service | Besoins, quantités, échanges | Utilisateurs du client | Client, SpendEdge | Durée de l'abonnement, puis restitution et suppression | Exécution du contrat | Sous-traitant du client (probable) |
+| E-mails envoyés et reçus | Futur | Envoyer les demandes, récupérer les réponses | Contenu des e-mails liés aux demandes d'achat | Client, fournisseurs | Client, prestataire e-mail | Durée de l'abonnement | À déterminer | Sous-traitant du client (probable) |
+| Accès aux boîtes e-mail | Futur | Envoyer depuis la boîte du client | Jetons OAuth chiffrés | Utilisateurs du client | Aucun hors service | Jusqu'à révocation | Exécution du contrat | Sous-traitant du client (probable) |
+| Données transmises à l'IA | Futur | Analyse des besoins, rédaction | Minimum nécessaire, identifiants techniques | Utilisateurs, fournisseurs | Fournisseur d'IA | À définir, idéalement sans rétention | À déterminer | Sous-traitant ; le fournisseur d'IA est sous-traitant ultérieur |
+| Abonnements et paiements | Futur | Facturation | Entreprise, formule, statut ; aucune donnée de carte (gérée par Stripe) | Clients | Stripe, comptable | 10 ans pour les pièces comptables | Obligation légale, contrat | Responsable du traitement |
+| Journaux techniques | En place (hébergeur) | Fonctionnement et sécurité | Adresses IP, URL, horodatage dans les journaux de l'hébergeur | Visiteurs | Vercel, Supabase | Selon les prestataires (à vérifier) | Intérêt légitime | Responsable du traitement |

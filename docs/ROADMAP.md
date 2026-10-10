@@ -2,6 +2,8 @@
 
 ## État
 
+V1 terminée le 2026-10-10. Rapport : `docs/RAPPORT-V1.md`. Prochaine étape : « À faire par un humain » (README), puis mise en ligne.
+
 | Phase | Contenu | État |
 | --- | --- | --- |
 | 1 | Structure, identité (DESIGN.md, CLAUDE.md, tokens, logo, composants) | Terminée |
@@ -11,7 +13,7 @@
 | 5 | Données et sécurité (schéma, RLS, migrations, tests pgTAP) | Terminée |
 | 6 | Administration initiale (démos, comptes, formules, contenus, RGPD) | Terminée |
 | 7 | Vérification (pages, responsive, droits, accessibilité, audit « ne fait pas IA ») | Terminée |
-| 8 | Documentation (README, .env.example, RGPD, rapport final) | À faire |
+| 8 | Documentation (README, .env.example, RGPD, rapport final) | Terminée |
 
 Détail des exigences : `docs/SPEC.md`. Décisions : `docs/DECISIONS.md`.
 
