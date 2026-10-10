@@ -137,9 +137,13 @@ test("demande RGPD : enregistrement, clôture motivée, export JSON", async ({ p
   await page.getByRole("button", { name: "Enregistrer" }).click();
   await expect(page.getByText("Demande mise à jour.")).toBeVisible();
 
-  const res = await page.request.get(`/admin/rgpd/export?email=${encodeURIComponent(adminEmail)}`);
-  expect(res.status()).toBe(200);
-  const json = await res.json();
+  await page.goto("/admin/rgpd");
+  await page.getByLabel("E-mail de la personne").fill(adminEmail);
+  const downloadPromise = page.waitForEvent("download");
+  await page.getByRole("button", { name: "Télécharger l'export" }).click();
+  const download = await downloadPromise;
+  expect(download.suggestedFilename()).toMatch(/^donnees-personnelles-.*\.json$/);
+  const json = JSON.parse(await (await import("node:fs/promises")).readFile(await download.path(), "utf8"));
   expect(json.email).toBe(adminEmail);
   expect(json.account.email).toBe(adminEmail);
   expect(sql(`select count(*) > 0 from public.audit_logs where action = 'personal_data_exported'`)).toBe("t");

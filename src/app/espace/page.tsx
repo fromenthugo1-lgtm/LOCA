@@ -8,9 +8,10 @@ import { Notice } from "@/components/ui/notice";
 import { Skeleton } from "@/components/ui/skeleton";
 import { SubmitButton } from "@/components/forms/submit-button";
 import { acceptCurrentTerms, requestAccountDeletion } from "@/features/auth/actions";
-import { resolveAccountView } from "@/features/auth/account-view";
+import { canUseProduct, resolveAccountView } from "@/features/auth/account-view";
 import { requireUser } from "@/features/auth/guards";
 import { getAccountContext } from "@/features/auth/session";
+import { getSubscriptionStates } from "@/features/billing/queries";
 import { getCurrentTermsVersion } from "@/features/legal/queries";
 import { isSupabaseConfigured } from "@/lib/env";
 
@@ -40,10 +41,11 @@ async function AccountHome({ searchParams }: { searchParams: SearchParams }) {
     return <Notice tone="error" title="Espace indisponible">Votre profil n&apos;a pas pu être chargé. Réessayez dans quelques minutes.</Notice>;
   }
 
+  // Version des CGU illisible pour l'instant : on ne bloque pas l'utilisateur, on redemandera plus tard.
   const view = resolveAccountView({
     status: ctx.profile.status,
     acceptedTermsVersion: ctx.profile.termsVersion,
-    currentTermsVersion: currentTerms,
+    currentTermsVersion: currentTerms ?? ctx.profile.termsVersion ?? "",
   });
 
   return (
@@ -62,7 +64,7 @@ async function AccountHome({ searchParams }: { searchParams: SearchParams }) {
         </Notice>
       ) : null}
 
-      {view === "terms_required" ? <TermsCard version={currentTerms} /> : null}
+      {view === "terms_required" && currentTerms ? <TermsCard version={currentTerms} /> : null}
       {view === "created" ? (
         <StateCard icon={CalendarClock} title="Votre compte est créé, réservez une démonstration">
           <p>
@@ -83,7 +85,7 @@ async function AccountHome({ searchParams }: { searchParams: SearchParams }) {
           <ButtonLink href={routes.contact} variant="secondary" className="mt-2 self-start">Nous contacter</ButtonLink>
         </StateCard>
       ) : null}
-      {view === "active" ? <ActiveSpace companies={ctx.companies} /> : null}
+      {canUseProduct(view) ? <ActiveSpace companies={ctx.companies} /> : null}
 
       {!ctx.profile.deletionRequestedAt ? <DeletionCard /> : null}
     </div>
@@ -117,7 +119,8 @@ function TermsCard({ version }: { version: string }) {
   );
 }
 
-function ActiveSpace({ companies }: { companies: { id: string; name: string; role: keyof typeof roleLabels }[] }) {
+async function ActiveSpace({ companies }: { companies: { id: string; name: string; role: keyof typeof roleLabels }[] }) {
+  const subscriptions = await getSubscriptionStates(companies.map((c) => c.id));
   return (
     <div className="flex flex-col gap-4">
       <Card className="p-6 sm:p-8">
@@ -131,6 +134,9 @@ function ActiveSpace({ companies }: { companies: { id: string; name: string; rol
                 <Building2 className="size-5 text-night" strokeWidth={1.75} aria-hidden="true" />
                 <span className="text-[15px] font-medium text-ink">{c.name}</span>
                 <span className="text-[13px] text-muted">{roleLabels[c.role]}</span>
+                <span className="ml-auto text-[13px] text-muted">
+                  {subscriptions.get(c.id) ? "Abonnement actif" : "Aucun abonnement actif"}
+                </span>
               </li>
             ))}
           </ul>

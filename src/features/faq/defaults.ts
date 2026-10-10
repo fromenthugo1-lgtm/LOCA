@@ -33,7 +33,7 @@ export const faqDefaults: FaqEntry[] = [
   {
     question: "L'IA peut-elle envoyer directement les e-mails ?",
     answer:
-      "C'est l'objectif, et cette fonction est en développement. Les envois se feront depuis la boîte que vous aurez autorisée, selon vos règles : validation avant envoi si vous le souhaitez, fournisseurs autorisés, limites d'envoi. SpendEdge ne passera jamais de commande ni n'acceptera d'offre à votre place.",
+      "C'est l'objectif, et cette fonction est en développement. Les envois se feront depuis la boîte que vous aurez autorisée, selon vos règles : validation avant envoi si vous le souhaitez, fournisseurs autorisés, limites d'envoi. SpendEdge ne passe aucune commande et n'accepte aucune offre sans votre autorisation explicite.",
   },
   {
     question: "Puis-je utiliser ma propre boîte e-mail professionnelle ?",
@@ -48,7 +48,7 @@ export const faqDefaults: FaqEntry[] = [
   {
     question: "Comment fonctionne l'abonnement ?",
     answer:
-      "L'abonnement est mensuel. La formule dépend du nombre d'utilisateurs et du volume de demandes. Les frais de mise en service sont facturés à part, une seule fois. Les tarifs vous sont présentés après la démonstration.",
+      "L'abonnement est mensuel. Les formules se distinguent notamment par le nombre d'utilisateurs et le volume de demandes. Les frais de mise en service sont facturés à part, une seule fois. Les tarifs vous sont présentés après la démonstration.",
   },
   {
     question: "Comment demander une démonstration ?",
@@ -63,6 +63,6 @@ export const faqDefaults: FaqEntry[] = [
   {
     question: "Comment mes données sont-elles protégées ?",
     answer:
-      "Les données de chaque entreprise sont cloisonnées : un client n'a jamais accès aux données d'un autre. Elles servent uniquement à fournir le service. L'hébergement est prévu dans l'Union européenne. Le détail figure dans la politique de confidentialité.",
+      "Les données de chaque entreprise sont cloisonnées : un client n'a jamais accès aux données d'un autre. Elles servent uniquement à fournir le service. La liste de nos prestataires techniques, leur localisation et les éventuels transferts hors de l'Union européenne figurent dans la politique de confidentialité.",
   },
 ];

@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { checkAntiSpam, demoRequestSchema, MIN_FILL_TIME_MS } from "@/features/demo-requests/schema";
 import { hashIdentifier } from "@/lib/security/ip";
+import { elapsedSinceToken, issueFormToken } from "@/features/demo-requests/form-token";
 
 const valid = {
   fullName: "Camille Martin",
@@ -61,5 +62,23 @@ describe("empreinte des adresses IP", () => {
     expect(a).not.toContain("203");
     expect(hashIdentifier("203.0.113.7", "s".repeat(32))).toBe(a);
     expect(hashIdentifier("203.0.113.7", "t".repeat(32))).not.toBe(a);
+  });
+});
+
+describe("jeton de formulaire signé", () => {
+  const secret = "s".repeat(32);
+  it("mesure le temps écoulé côté serveur", () => {
+    const token = issueFormToken(secret, 1_000_000);
+    expect(elapsedSinceToken(token, secret, 1_005_000)).toBe(5000);
+  });
+  it("refuse un jeton falsifié, mal formé, futur ou expiré", () => {
+    const token = issueFormToken(secret, 1_000_000);
+    const [ts, sig] = token.split(".");
+    expect(elapsedSinceToken(`${Number(ts) - 60_000}.${sig}`, secret, 1_005_000)).toBeNull();
+    expect(elapsedSinceToken(token, "t".repeat(32), 1_005_000)).toBeNull();
+    expect(elapsedSinceToken("pas-un-jeton", secret)).toBeNull();
+    expect(elapsedSinceToken("", secret)).toBeNull();
+    expect(elapsedSinceToken(token, secret, 999_000)).toBeNull();
+    expect(elapsedSinceToken(token, secret, 1_000_000 + 3 * 60 * 60 * 1000)).toBeNull();
   });
 });

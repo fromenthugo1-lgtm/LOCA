@@ -55,7 +55,7 @@ Tout est dans `DESIGN.md`. Ne jamais modifier l'identité en ajoutant une foncti
 
 - RLS activée sur **toutes** les tables, politiques par rôle et par `company_id`. Fonctions d'aide `SECURITY DEFINER` avec `set search_path = ''`.
 - Autorisations revérifiées côté serveur à chaque opération sensible (`requireUser`, `requireSuperAdmin` dans `src/features/auth/guards.ts`) ; jamais de rôle venu du navigateur.
-- Clé secrète Supabase uniquement dans `src/lib/supabase/admin.ts` (`import 'server-only'`). Usage limité aux RPC anti-abus et à l'API d'administration Auth.
+- Clé secrète Supabase uniquement dans `src/lib/supabase/admin.ts` (`import 'server-only'`). Usage limité aux RPC anti-abus (`submit_demo_request`, `check_rate_limit`), à `record_signup_terms_acceptance` et à l'API d'administration Auth.
 - Toute entrée validée côté serveur ; requêtes paramétrées (client Supabase ou fonctions SQL).
 - Limitation des formulaires et des connexions (`check_rate_limit`). IP jamais stockée en clair (HMAC avec `IP_HASH_SECRET`).
 - En-têtes de sécurité dans `next.config.ts`. Aucun secret, jeton, mot de passe ou contenu confidentiel dans les journaux.

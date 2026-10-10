@@ -6,7 +6,7 @@ import { companySizeOptions, sectorOptions } from "@/config/business";
 import { routes } from "@/config/routes";
 import { Field, Input, Select, Textarea, fieldDescribedBy } from "@/components/ui/field";
 import { Notice } from "@/components/ui/notice";
-import { submitDemoRequest, type DemoFormState } from "@/features/demo-requests/actions";
+import { getDemoFormToken, submitDemoRequest, type DemoFormState } from "@/features/demo-requests/actions";
 import {
   demoRequestSchema,
   fieldErrorsFrom,
@@ -20,12 +20,18 @@ type Props = { privacyNotice: string; successTitle: string; successText: string 
 export function DemoRequestForm({ privacyNotice, successTitle, successText }: Props) {
   const [state, formAction] = useActionState<DemoFormState, FormData>(submitDemoRequest, { status: "idle" });
   const [clientErrors, setClientErrors] = useState<Partial<Record<DemoRequestField, string>>>({});
-  const mountedAt = useRef<number>(0);
-  const elapsedRef = useRef<HTMLInputElement>(null);
+  const [formToken, setFormToken] = useState("");
   const resultRef = useRef<HTMLDivElement>(null);
 
+  // Jeton horodaté et signé par le serveur : le délai minimal de remplissage est vérifié côté serveur.
   useEffect(() => {
-    mountedAt.current = Date.now();
+    let active = true;
+    getDemoFormToken().then((token) => {
+      if (active && token) setFormToken(token);
+    });
+    return () => {
+      active = false;
+    };
   }, []);
 
   useEffect(() => {
@@ -57,7 +63,6 @@ export function DemoRequestForm({ privacyNotice, successTitle, successText }: Pr
       return;
     }
     setClientErrors({});
-    if (elapsedRef.current) elapsedRef.current.value = String(Date.now() - mountedAt.current);
   }
 
   const control = (name: DemoRequestField, hint?: string) => ({
@@ -132,7 +137,7 @@ export function DemoRequestForm({ privacyNotice, successTitle, successText }: Pr
         <label htmlFor="demo-website">Site web</label>
         <input id="demo-website" name="website" type="text" tabIndex={-1} autoComplete="off" defaultValue="" />
       </div>
-      <input ref={elapsedRef} type="hidden" name="elapsedMs" defaultValue="0" />
+      <input type="hidden" name="formToken" value={formToken} />
 
       <p className="text-[13px] leading-relaxed text-muted">
         {privacyNotice}{" "}

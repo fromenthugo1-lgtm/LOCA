@@ -88,3 +88,15 @@ Chaque décision : contexte, choix, conséquence. On ajoute à la fin, on ne ré
 - Conservation : empreinte IP des démos effacée après 30 jours, conservation des demandes comptée depuis le dernier échange, purge quotidienne planifiée (`pg_cron`, `purge_expired_data`).
 - IP lue d'abord dans les en-têtes posés par Vercel (`x-vercel-forwarded-for`, `x-real-ip`).
 **Reste ouvert (à faire par un humain, voir README).** Les limites de connexion applicatives peuvent être contournées par un appel direct à l'API Supabase Auth : activer le CAPTCHA de Supabase Auth (Cloudflare Turnstile) et vérifier les limites de débit du projet hébergé. Un SMTP dédié est nécessaire avant la production (le service intégré est plafonné).
+
+## D-015 · Corrections après relecture de phase (2026-10-10)
+
+**Contexte.** Relecture par l'agent `relecteur-de-phase` contre `docs/SPEC.md` ; aucun bloquant, constats vérifiés à la source.
+**Choix.**
+- Un admin ne peut ni programmer la suppression ni anonymiser un autre admin ; un compte anonymisé ne peut plus être réactivé (migration `…0600`, testé).
+- Suppression de compte couverte par des tests pgTAP (délai de grâce, bornes, auto-suppression, double demande).
+- Délai minimal du formulaire de démo mesuré par un jeton horodaté signé par le serveur (`form-token.ts`), plus par une valeur du navigateur. Le formulaire exige JavaScript.
+- Export RGPD par action serveur (POST) : l'adresse e-mail n'apparaît plus dans une URL ni dans les journaux d'accès.
+- Version des CGU : `null` si la base est illisible, aucune acceptation enregistrée sur une version incertaine.
+- État d'abonnement calculé en base (`company_subscription_is_active`) affiché dans l'espace client ; l'accès au produit reste conditionné au statut du compte en V1 (aucune transaction possible).
+- Textes : retrait de l'affirmation d'hébergement dans l'UE (Vercel est américain, à préciser par Hugo), formulation conforme à la règle « aucune commande sans autorisation explicite ».

@@ -103,7 +103,7 @@ export const siteContentDefaults: { [K in SiteContentKey]: SiteContent<K> } = {
   "home.pricing": {
     eyebrow: "Tarifs",
     title: "Une mise en service, puis un abonnement mensuel.",
-    intro: "Les frais de mise en service sont ponctuels. L'abonnement dépend du nombre d'utilisateurs et du volume de demandes. Une démonstration précède toute souscription.",
+    intro: "Les frais de mise en service sont ponctuels. Les formules se distinguent notamment par le nombre d'utilisateurs et le volume de demandes. Une démonstration précède toute souscription.",
     emptyTitle: "Offre adaptée à votre activité.",
     emptyText: "Tarification sur devis. Nous vous présentons la formule adaptée après la démonstration.",
     cta: "Demander une démonstration",

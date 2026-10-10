@@ -30,6 +30,7 @@ export const adminNav: { title: string; items: AdminNavItem[] }[] = [
   {
     title: "Bientôt",
     items: [
+      { label: "Gestion avancée des comptes et entreprises", soon: true },
       { label: "Abonnements et paiements", soon: true },
       { label: "Essais et accès gratuits", soon: true },
       { label: "Codes promo et affiliation", soon: true },

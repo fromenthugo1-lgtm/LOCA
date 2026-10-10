@@ -8,7 +8,7 @@ import { getSiteContent } from "@/features/site-content/queries";
 
 export const metadata: Metadata = {
   title: "Contact",
-  description: "Contacter SpendEdge ou demander une démonstration.",
+  description: "Contactez SpendEdge pour une question sur vos demandes de prix fournisseurs, ou demandez une démonstration adaptée à votre activité.",
   alternates: { canonical: "/contact" },
 };
 

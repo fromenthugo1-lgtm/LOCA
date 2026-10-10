@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Download } from "lucide-react";
 import { ActionForm } from "@/components/admin/action-form";
+import { ExportForm } from "@/components/admin/export-form";
 import { AdminSuspense } from "@/components/admin/page-suspense";
 import { DataTable, EmptyState, PageHeader, Section, Td } from "@/components/admin/ui";
-import { Button } from "@/components/ui/button";
 import { Field, Input, Select } from "@/components/ui/field";
 import { createGdprRequest } from "@/features/admin/gdpr/actions";
 import { listGdprRequests } from "@/features/admin/gdpr/queries";
@@ -72,17 +71,7 @@ async function GdprList() {
             </ActionForm>
           </Section>
           <Section title="Exporter les données d'une personne" description="Fichier JSON : compte, entreprises, demandes de démo, demandes RGPD. L'export est journalisé.">
-            <form action="/admin/rgpd/export" method="get" className="flex flex-col gap-4">
-              <Field id="export-email" label="E-mail de la personne">
-                <Input id="export-email" name="email" type="email" required />
-              </Field>
-              <div>
-                <Button type="submit" variant="secondary">
-                  <Download strokeWidth={1.75} aria-hidden="true" />
-                  Télécharger l&apos;export
-                </Button>
-              </div>
-            </form>
+            <ExportForm />
           </Section>
         </div>
       </div>

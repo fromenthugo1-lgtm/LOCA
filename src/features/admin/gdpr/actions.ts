@@ -19,7 +19,8 @@ export async function createGdprRequest(_prev: ActionState, formData: FormData):
     })
     .safeParse(Object.fromEntries(formData));
   if (!parsed.success) return invalid(parsed.error);
-  const { data: userId } = await supabase.rpc("admin_find_account_by_email", { p_email: parsed.data.requesterEmail });
+  const { data: userId, error: findError } = await supabase.rpc("admin_find_account_by_email", { p_email: parsed.data.requesterEmail });
+  if (findError) return dbError("recherche du compte du demandeur", findError);
   const { data, error } = await supabase
     .from("gdpr_requests")
     .insert({
@@ -74,4 +75,24 @@ export async function updateGdprRequest(_prev: ActionState, formData: FormData):
   if (error) return dbError("mise à jour d'une demande RGPD", error);
   revalidatePath(`/admin/rgpd/${d.id}`);
   return { status: "success", message: "Demande mise à jour." };
+}
+
+export type ExportState = { status: "idle" } | { status: "error"; message: string } | { status: "ready"; json: string; filename: string };
+
+/**
+ * Export des données d'une personne (droit d'accès, portabilité). Action serveur (POST) :
+ * l'adresse n'apparaît dans aucune URL ni journal d'accès. La fonction en base vérifie le
+ * rôle et journalise l'export.
+ */
+export async function exportPersonalData(_prev: ExportState, formData: FormData): Promise<ExportState> {
+  const { supabase } = await adminDb();
+  const email = z.string().trim().toLowerCase().pipe(z.email()).safeParse(formData.get("email"));
+  if (!email.success) return { status: "error", message: "Adresse e-mail invalide." };
+  const { data, error } = await supabase.rpc("admin_export_personal_data", { p_email: email.data });
+  if (error) {
+    console.error("[admin] export RGPD impossible", { code: error.code });
+    return { status: "error", message: "L'export a échoué. Réessayez dans quelques instants." };
+  }
+  const date = new Date().toISOString().slice(0, 10);
+  return { status: "ready", json: JSON.stringify(data, null, 2), filename: `donnees-personnelles-${date}.json` };
 }

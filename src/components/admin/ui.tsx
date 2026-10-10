@@ -56,7 +56,7 @@ export function EmptyState({ title, children }: { title: string; children?: Reac
 /** Tableau d'administration : défile horizontalement sur petit écran, sans casser la page. */
 export function DataTable({ caption, head, children }: { caption: string; head: string[]; children: ReactNode }) {
   return (
-    <div className="overflow-x-auto rounded-brand border border-line bg-surface">
+    <div className="overflow-x-auto rounded-brand border border-line bg-surface" tabIndex={0} role="region" aria-label={caption}>
       <table className="w-full min-w-[640px] text-left text-sm">
         <caption className="sr-only">{caption}</caption>
         <thead className="border-b border-line bg-canvas text-[12px] text-muted">

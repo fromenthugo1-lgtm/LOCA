@@ -11,6 +11,9 @@ import { WalkthroughSection } from "@/components/marketing/walkthrough";
 import { JsonLd } from "@/components/seo/json-ld";
 import { siteConfig } from "@/config/site";
 import { getSiteUrl } from "@/lib/env";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = { alternates: { canonical: "/" } };
 
 export default function HomePage() {
   const url = getSiteUrl();

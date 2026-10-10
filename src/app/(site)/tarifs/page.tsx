@@ -7,7 +7,7 @@ import { PricingSection } from "@/components/marketing/pricing";
 export const metadata: Metadata = {
   title: "Tarifs et formules",
   description:
-    "Une mise en service facturée une seule fois, puis un abonnement mensuel selon le nombre d'utilisateurs et le volume de demandes. Tarifs présentés après la démonstration.",
+    "Tarifs SpendEdge : une mise en service facturée une seule fois, puis un abonnement mensuel. La formule adaptée vous est présentée après la démonstration.",
   alternates: { canonical: "/tarifs" },
 };
 

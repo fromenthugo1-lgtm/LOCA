@@ -785,6 +785,10 @@ export type Database = {
         };
         Returns: boolean;
       };
+      company_subscription_is_active: {
+        Args: { p_company_id: string };
+        Returns: boolean;
+      };
       current_user_is_super_admin: {
         Args: Record<PropertyKey, never>;
         Returns: boolean;

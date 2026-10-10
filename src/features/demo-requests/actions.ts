@@ -3,6 +3,7 @@
 import { getServerSecrets } from "@/lib/env.server";
 import { getClientIp, hashIdentifier } from "@/lib/security/ip";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
+import { elapsedSinceToken, issueFormToken } from "./form-token";
 import { checkAntiSpam, demoRequestSchema, fieldErrorsFrom, readDemoForm, type DemoRequestField } from "./schema";
 
 export type DemoFormState =
@@ -24,18 +25,16 @@ const messages = {
  * a confirmé l'insertion. Aucun e-mail de confirmation n'est annoncé (aucun service configuré).
  */
 export async function submitDemoRequest(_prev: DemoFormState, formData: FormData): Promise<DemoFormState> {
-  const spam = checkAntiSpam({
-    honeypot: String(formData.get("website") ?? ""),
-    elapsedMs: Number(formData.get("elapsedMs") ?? 0),
-  });
+  const supabase = createSupabaseAdminClient();
+  const secrets = getServerSecrets();
+  if (!supabase || !secrets) return { status: "error", message: messages.unavailable };
+
+  const elapsed = elapsedSinceToken(String(formData.get("formToken") ?? ""), secrets.ipHashSecret);
+  const spam = checkAntiSpam({ honeypot: String(formData.get("website") ?? ""), elapsedMs: elapsed ?? Number.NaN });
   if (!spam.ok) return { status: "error", message: messages.spam };
 
   const parsed = demoRequestSchema.safeParse(readDemoForm(formData));
   if (!parsed.success) return { status: "invalid", fieldErrors: fieldErrorsFrom(parsed.error) };
-
-  const supabase = createSupabaseAdminClient();
-  const secrets = getServerSecrets();
-  if (!supabase || !secrets) return { status: "error", message: messages.unavailable };
 
   const ipHash = hashIdentifier(await getClientIp(), secrets.ipHashSecret);
   const d = parsed.data;
@@ -59,4 +58,10 @@ export async function submitDemoRequest(_prev: DemoFormState, formData: FormData
     return { status: "error", message: messages.failed };
   }
   return { status: "success" };
+}
+
+/** Délivre le jeton horodaté du formulaire (appelé à l'affichage du formulaire). */
+export async function getDemoFormToken(): Promise<string | null> {
+  const secrets = getServerSecrets();
+  return secrets ? issueFormToken(secrets.ipHashSecret) : null;
 }

@@ -10,7 +10,7 @@
 | 4 | Authentification (inscription, connexion, mot de passe oublié, états de compte) | Terminée |
 | 5 | Données et sécurité (schéma, RLS, migrations, tests pgTAP) | Terminée |
 | 6 | Administration initiale (démos, comptes, formules, contenus, RGPD) | Terminée |
-| 7 | Vérification (pages, responsive, droits, accessibilité, audit « ne fait pas IA ») | À faire |
+| 7 | Vérification (pages, responsive, droits, accessibilité, audit « ne fait pas IA ») | Terminée |
 | 8 | Documentation (README, .env.example, RGPD, rapport final) | À faire |
 
 Détail des exigences : `docs/SPEC.md`. Décisions : `docs/DECISIONS.md`.

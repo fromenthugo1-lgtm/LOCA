@@ -114,7 +114,7 @@ export function ComparePanel() {
   const answered = demoSuppliers.filter((s) => s.status === "answered");
   return (
     <Panel title="Comparaison des réponses">
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto" tabIndex={0} role="region" aria-label="Comparaison fictive, défilement horizontal">
         <table className="w-full min-w-[420px] text-left text-[13px]">
           <caption className="sr-only">Comparaison fictive des réponses fournisseurs</caption>
           <thead>

@@ -92,10 +92,11 @@ export async function signUp(_prev: AuthFormState, formData: FormData): Promise<
   // côté serveur. Si l'adresse était déjà inscrite, l'identifiant renvoyé est factice et
   // rien n'est modifié. En cas d'échec, l'acceptation sera redemandée à la première connexion.
   const service = createSupabaseAdminClient();
-  if (service && data.user) {
+  const termsVersion = await getCurrentTermsVersion();
+  if (service && data.user && termsVersion) {
     const { error: termsError } = await service.rpc("record_signup_terms_acceptance", {
       p_user_id: data.user.id,
-      p_version: await getCurrentTermsVersion(),
+      p_version: termsVersion,
     });
     if (termsError) console.error("[auth] enregistrement des CGU impossible", { code: termsError.code });
   }
@@ -161,7 +162,9 @@ export async function acceptCurrentTerms(): Promise<void> {
   const { data } = await supabase.auth.getClaims();
   if (!data?.claims?.sub) redirect(routes.signIn);
 
-  const { error } = await supabase.rpc("accept_terms", { p_version: await getCurrentTermsVersion() });
+  const version = await getCurrentTermsVersion();
+  if (!version) redirect(`${routes.account}?erreur=cgu`);
+  const { error } = await supabase.rpc("accept_terms", { p_version: version });
   if (error) {
     console.error("[auth] acceptation des CGU impossible", { code: error.code });
     redirect(`${routes.account}?erreur=cgu`);
