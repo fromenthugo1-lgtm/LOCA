@@ -3,7 +3,7 @@ import { CircleAlert } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const controlBase =
-  "w-full rounded-brand border bg-surface px-3 text-[15px] text-ink placeholder:text-muted/80 transition-colors duration-150 focus-visible:border-primary focus-visible:outline-2 focus-visible:outline-offset-0 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-danger md:text-sm";
+  "w-full rounded-brand border border-line bg-surface px-3 text-[15px] text-ink placeholder:text-muted/80 transition-colors duration-150 focus-visible:border-primary focus-visible:outline-2 focus-visible:outline-offset-0 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-danger md:text-sm";
 
 export function Input({ className, ...props }: ComponentProps<"input">) {
   return <input className={cn(controlBase, "h-11 md:h-10", className)} {...props} />;

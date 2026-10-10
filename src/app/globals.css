@@ -46,6 +46,14 @@
 }
 
 @layer base {
+  /* Couleur de bordure par défaut de la charte (Tailwind 4 utilise sinon la couleur du texte). */
+  *,
+  ::after,
+  ::before,
+  ::backdrop {
+    border-color: var(--color-line);
+  }
+
   html {
     -webkit-text-size-adjust: 100%;
     scroll-behavior: smooth;
