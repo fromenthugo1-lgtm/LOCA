@@ -1,0 +1,98 @@
+@import "tailwindcss";
+
+/*
+ * Design tokens « Midnight Precision ». Source : DESIGN.md.
+ * Toute valeur visuelle passe par ces variables ; aucune couleur en dur dans les composants.
+ */
+@theme {
+  --color-night: #14243a;
+  --color-night-muted: #94a3b8;
+  --color-night-line: #24364f;
+  --color-primary: #3563e9;
+  --color-primary-hover: #2b54d4;
+  --color-ai: #18b6a4;
+  --color-ai-ink: #0f766e;
+  --color-canvas: #f7f9fc;
+  --color-surface: #ffffff;
+  --color-ink: #0f172a;
+  --color-muted: #64748b;
+  --color-line: #e2e8f0;
+  --color-success: #16a34a;
+  --color-success-ink: #15803d;
+  --color-warning: #f59e0b;
+  --color-warning-ink: #b45309;
+  --color-danger: #dc2626;
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, "Segoe UI", Helvetica, Arial, sans-serif;
+
+  /* Un seul rayon pour tout le site. */
+  --radius-brand: 8px;
+
+  --shadow-panel: 0 1px 2px rgb(15 23 42 / 0.06);
+
+  --ease-brand: cubic-bezier(0.2, 0, 0, 1);
+  --animate-appear: appear 240ms var(--ease-brand) both;
+
+  @keyframes appear {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+    scroll-padding-top: 88px;
+  }
+
+  body {
+    background: var(--color-canvas);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-feature-settings: "cv11", "ss01";
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background: rgb(53 99 233 / 0.18);
+  }
+
+  /* Focus visible partout : anneau de 2 px décalé de 2 px. */
+  :focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+    border-radius: var(--radius-brand);
+  }
+
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0ms !important;
+    animation-delay: 0ms !important;
+    transition-duration: 0ms !important;
+    scroll-behavior: auto !important;
+  }
+  html {
+    scroll-behavior: auto;
+  }
+}
