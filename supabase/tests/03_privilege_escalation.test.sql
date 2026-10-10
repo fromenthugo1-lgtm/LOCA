@@ -58,7 +58,7 @@ select lives_ok($$select public.admin_set_account_status('11111111-1111-1111-111
   'L''admin peut suspendre un compte');
 select throws_ok($$select public.admin_set_account_status('99999999-9999-9999-9999-999999999999', 'active')$$,
   '42501', 'cannot_change_own_status', 'L''admin ne peut pas changer son propre statut');
-select is((select count(*)::int from public.demo_requests), 1, 'L''admin lit les demandes de démo');
+select is((select count(*)::int from public.demo_requests where email = 'jean@exemple.test'), 1, 'L''admin lit les demandes de démo');
 select ok(exists(select 1 from public.audit_logs where action = 'account_status_changed'
   and target_id = '11111111-1111-1111-1111-111111111111'), 'Le changement de statut est journalisé');
 

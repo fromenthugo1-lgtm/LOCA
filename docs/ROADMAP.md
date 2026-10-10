@@ -7,8 +7,8 @@
 | 1 | Structure, identité (DESIGN.md, CLAUDE.md, tokens, logo, composants) | Terminée |
 | 2 | Site vitrine (accueil, démonstration au défilement, offres, FAQ, pied de page) | Terminée |
 | 3 | Pages commerciales (demande de démo, pages juridiques, formules) | Terminée |
-| 4 | Authentification (inscription, connexion, mot de passe oublié, états de compte) | À faire |
-| 5 | Données et sécurité (schéma, RLS, migrations, tests pgTAP) | Schéma et tests écrits en avance (phase 1) |
+| 4 | Authentification (inscription, connexion, mot de passe oublié, états de compte) | Terminée |
+| 5 | Données et sécurité (schéma, RLS, migrations, tests pgTAP) | Terminée |
 | 6 | Administration initiale (démos, comptes, formules, contenus, RGPD) | À faire |
 | 7 | Vérification (pages, responsive, droits, accessibilité, audit « ne fait pas IA ») | À faire |
 | 8 | Documentation (README, .env.example, RGPD, rapport final) | À faire |

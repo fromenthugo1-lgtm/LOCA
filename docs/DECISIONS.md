@@ -57,3 +57,19 @@ Chaque décision : contexte, choix, conséquence. On ajoute à la fin, on ne ré
 
 **Choix.** Les formules stockent des centimes d'euro (entiers), `null` quand le montant n'est pas communiqué. Les prix affichés s'entendent HT (vente B2B), réglable dans `src/config/business.ts`.
 **Conséquence.** Aucun arrondi flottant, aucun faux prix : sans montant, la carte affiche « sur devis ».
+
+## D-011 · `/admin` répond « page introuvable » aux non-administrateurs (2026-10-10)
+
+**Contexte.** `forbidden()` de Next.js est encore expérimental (`authInterrupts`).
+**Choix.** `requireSuperAdmin()` renvoie `notFound()` : un utilisateur connecté non admin reçoit une 404, un visiteur non connecté est renvoyé vers la connexion par le proxy.
+**Conséquence.** L'existence de l'administration n'est pas confirmée à un utilisateur standard.
+
+## D-012 · Client Supabase serveur créé « au moment de la requête » (2026-10-10)
+
+**Contexte.** Le client Supabase lit l'heure à sa création ; avec Cache Components, Next.js refuse une lecture de l'heure pendant un pré-rendu.
+**Choix.** `createSupabaseServerClient()` appelle `await connection()` avant de lire les cookies.
+**Conséquence.** Les pages connectées sont rendues à la demande (sous `<Suspense>`), le reste du site reste pré-rendu.
+
+## D-013 · Limites de tentatives applicatives, refus si non configurées (2026-10-10)
+
+**Choix.** En plus des limites intégrées à Supabase Auth : connexion 20 par IP et 8 par e-mail par 15 minutes, inscription 5 par IP par heure, réinitialisation 5 par IP et 3 par e-mail par heure (`src/features/auth/rate-limit.ts`). Sans clé secrète ou sans `IP_HASH_SECRET`, l'action refuse au lieu de passer sans contrôle. Pour « mot de passe oublié », une limite atteinte renvoie la même réponse qu'un succès (rien n'est révélé).

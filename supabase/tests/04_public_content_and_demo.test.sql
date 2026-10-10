@@ -23,7 +23,7 @@ select isnt(
   public.submit_demo_request('Jean Test', 'Jean@Exemple.test', 'Exemple', 'Gérant', 'btp', null, null, null, 'iphash-0123456789abcdef'),
   null, 'Le serveur enregistre une demande'
 );
-select is((select email from public.demo_requests limit 1), 'jean@exemple.test', 'L''e-mail est normalisé');
+select is((select count(*)::int from public.demo_requests where email = 'jean@exemple.test'), 1, 'L''e-mail est normalisé (minuscules)');
 select lives_ok($$select public.submit_demo_request('Jean Test', 'jean2@exemple.test', 'Exemple', 'Gérant', 'btp', null, null, null, 'iphash-0123456789abcdef')$$, '2e demande, même IP');
 select lives_ok($$select public.submit_demo_request('Jean Test', 'jean3@exemple.test', 'Exemple', 'Gérant', 'btp', null, null, null, 'iphash-0123456789abcdef')$$, '3e demande, même IP');
 select throws_ok(

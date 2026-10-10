@@ -1,6 +1,7 @@
 import "server-only";
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
+import { connection } from "next/server";
 import { getPublicSupabaseConfig } from "@/lib/env";
 import type { Database } from "./database.types";
 
@@ -13,6 +14,9 @@ export async function createSupabaseServerClient() {
   const config = getPublicSupabaseConfig();
   if (!config) return null;
 
+  // Le client lit l'heure à sa création (expiration du jeton) : la lecture doit avoir lieu au
+  // moment de la requête, jamais pendant le pré-rendu (Next.js, « blocking-prerender-current-time »).
+  await connection();
   const cookieStore = await cookies();
   return createServerClient<Database>(config.supabaseUrl, config.supabasePublishableKey, {
     cookies: {
