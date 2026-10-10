@@ -18,7 +18,8 @@
     "db:types": "supabase gen types typescript --local > src/lib/supabase/database.types.ts",
     "audit:ai": "node scripts/audit-ai.mjs",
     "admin:create": "node scripts/create-admin.mjs",
-    "env:local": "node scripts/setup-local-env.mjs"
+    "env:local": "node scripts/setup-local-env.mjs",
+    "test": "npm run typecheck && npm run test:unit && npm run audit:ai"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",
