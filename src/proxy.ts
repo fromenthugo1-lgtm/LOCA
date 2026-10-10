@@ -48,6 +48,22 @@ export async function proxy(request: NextRequest) {
     return redirectKeepingCookies(target, response);
   }
 
+  // Administration : rôle vérifié en base avant tout rendu. Un non-admin reçoit une vraie
+  // page 404, sans indice sur l'existence de l'espace. Les pages et actions revérifient.
+  const isAdminPath = pathname === routes.admin || pathname.startsWith(`${routes.admin}/`);
+  if (isAdminPath && isSignedIn) {
+    const { data: isAdmin, error } = await supabase.rpc("current_user_is_super_admin");
+    if (error || isAdmin !== true) {
+      const notFoundUrl = request.nextUrl.clone();
+      notFoundUrl.pathname = "/page-introuvable";
+      notFoundUrl.search = "";
+      const rewrite = NextResponse.rewrite(notFoundUrl, { status: 404 });
+      response.cookies.getAll().forEach((cookie) => rewrite.cookies.set(cookie));
+      rewrite.headers.set("Cache-Control", "private, no-store");
+      return rewrite;
+    }
+  }
+
   if (isSignedIn && guestOnlyPaths.some((p) => pathname === p)) {
     const target = request.nextUrl.clone();
     target.pathname = routes.account;

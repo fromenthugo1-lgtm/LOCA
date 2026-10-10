@@ -11,3 +11,5 @@ Ce qui s'est passé, daté. On ajoute à la fin.
 - Phases 2 et 3 : accueil complet, démonstration au défilement, page démo réellement reliée à la base, pages juridiques en trame.
 - Phase 4 : authentification Supabase complète. Défaut trouvé et corrigé : erreur « Date.now() pendant le pré-rendu » sur /espace (D-012).
 - Phase 5 : schéma, RLS et tests pgTAP déjà faits en phase 1 ; deux tests rendus indépendants des données laissées par les tests de parcours.
+- Relecture de sécurité (agent relecteur-securite) : 3 constats importants confirmés et corrigés (redirection ouverte, admin suspendu, CGU contournables), mineurs traités (D-014). CAPTCHA laissé à configurer par un humain.
+- Phase 6 : administration complète. Défauts trouvés par les tests : contrainte de clé de contenu trop stricte, confirmation perdue après « revenir au texte par défaut », en-tête trop large sur mobile (page dézoomée).

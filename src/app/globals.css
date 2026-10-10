@@ -56,8 +56,12 @@
 
   html {
     -webkit-text-size-adjust: 100%;
-    scroll-behavior: smooth;
     scroll-padding-top: 88px;
+  }
+
+  /* Défilement doux réservé aux ancres du site vitrine (pas dans les espaces connectés). */
+  html:has(.site-shell) {
+    scroll-behavior: smooth;
   }
 
   body {

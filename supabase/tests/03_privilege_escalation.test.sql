@@ -46,7 +46,7 @@ select lives_ok($$select public.accept_terms('cgu-v1')$$, 'Alice peut accepter l
 -- ---------------- Visiteur anonyme ----------------
 set local role anon;
 set local request.jwt.claims to '{"role":"anon"}';
-select throws_ok($$select public.submit_demo_request('a','b@c.de','c','d','e',null,null,null,'0123456789abcdef')$$,
+select throws_ok($$select public.submit_demo_request('a','b@c.de','c','d','e',null,null,null,'0123456789abcdef','0123456789abcdef')$$,
   '42501', null, 'Anon ne peut pas appeler directement l''enregistrement de démo (réservé au serveur)');
 select throws_ok($$select count(*) from public.demo_requests$$, '42501', null, 'Anon ne lit pas les demandes de démo');
 

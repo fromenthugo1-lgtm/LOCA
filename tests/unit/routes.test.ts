@@ -13,3 +13,16 @@ describe("redirection après connexion", () => {
     expect(safeInternalPath(null)).toBe("/espace");
   });
 });
+
+describe("redirection après connexion : contournements connus", () => {
+  it.each(["/\t/exemple.com", "/\n/exemple.com", "/\r/exemple.com", "/%09/exemple.com".replace("%09", "\t"), "/\\/exemple.com", "///exemple.com"])(
+    "refuse %j",
+    (value) => {
+      expect(safeInternalPath(value)).toBe("/espace");
+    },
+  );
+  it("garde le chemin et la requête d'un lien interne", () => {
+    expect(safeInternalPath("/reinitialiser-mot-de-passe")).toBe("/reinitialiser-mot-de-passe");
+    expect(safeInternalPath("/admin/comptes?statut=active")).toBe("/admin/comptes?statut=active");
+  });
+});

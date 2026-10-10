@@ -16,7 +16,7 @@ export function AppHeader({ area }: { area: "client" | "admin" }) {
             <Logo />
           </Link>
           {area === "admin" ? (
-            <span className="rounded-brand border border-line px-2 py-0.5 text-[12px] font-medium text-muted">Administration</span>
+            <span className="hidden rounded-brand border border-line px-2 py-0.5 text-[12px] font-medium text-muted sm:inline">Administration</span>
           ) : null}
         </div>
         <Suspense fallback={null}>
@@ -36,16 +36,21 @@ async function UserMenu({ area }: { area: "client" | "admin" }) {
       {ctx.isSuperAdmin ? (
         <Link
           href={area === "admin" ? routes.account : routes.admin}
-          className="inline-flex h-9 items-center gap-1.5 rounded-brand px-3 text-sm text-ink hover:bg-ink/5"
+          aria-label={area === "admin" ? "Espace client" : "Administration"}
+          className="inline-flex h-11 min-w-11 items-center justify-center gap-1.5 rounded-brand px-2 text-sm text-ink hover:bg-ink/5 sm:h-9 sm:px-3"
         >
           <Shield className="size-4" strokeWidth={1.75} aria-hidden="true" />
-          {area === "admin" ? "Espace client" : "Administration"}
+          <span className="hidden sm:inline">{area === "admin" ? "Espace client" : "Administration"}</span>
         </Link>
       ) : null}
       <form action={signOut}>
-        <button type="submit" className="inline-flex h-9 items-center gap-1.5 rounded-brand px-3 text-sm text-ink hover:bg-ink/5">
+        <button
+          type="submit"
+          aria-label="Se déconnecter"
+          className="inline-flex h-11 min-w-11 items-center justify-center gap-1.5 rounded-brand px-2 text-sm text-ink hover:bg-ink/5 sm:h-9 sm:px-3"
+        >
           <LogOut className="size-4" strokeWidth={1.75} aria-hidden="true" />
-          Se déconnecter
+          <span className="hidden sm:inline">Se déconnecter</span>
         </button>
       </form>
     </div>

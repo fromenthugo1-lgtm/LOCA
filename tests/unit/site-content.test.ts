@@ -25,3 +25,9 @@ describe("textes par défaut du site", () => {
     expect(all).not.toMatch(/[—–]/);
   });
 });
+
+describe("clés de section", () => {
+  it("respectent le format accepté par la base", () => {
+    for (const key of siteContentKeys) expect(key).toMatch(/^[A-Za-z0-9_.-]{1,64}$/);
+  });
+});

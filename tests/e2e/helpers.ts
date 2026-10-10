@@ -38,6 +38,12 @@ export function confirmPathFrom(html: string): string {
   return match[1].replace(/&amp;/g, "&");
 }
 
+/** Ouvre le lien d'un e-mail et valide la page intermédiaire (bouton). */
+export async function openEmailLink(page: import("@playwright/test").Page, html: string): Promise<void> {
+  await page.goto(confirmPathFrom(html));
+  await page.locator("form").getByRole("button").click();
+}
+
 /** Identifiant de test robuste, généré à chaque exécution (aucune valeur en dur). */
 export function makeTestCredential(): string {
   return `Essai-${crypto.randomUUID()}-A9`;

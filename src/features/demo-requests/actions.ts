@@ -49,6 +49,7 @@ export async function submitDemoRequest(_prev: DemoFormState, formData: FormData
     p_phone: d.phone ?? "",
     p_message: d.message ?? "",
     p_ip_hash: ipHash,
+    p_email_hash: hashIdentifier(`email:${d.email}`, secrets.ipHashSecret),
   });
 
   if (error) {

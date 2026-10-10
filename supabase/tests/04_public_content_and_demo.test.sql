@@ -20,14 +20,14 @@ select throws_ok('select provider_product_id from public.plans', '42501', null, 
 reset role;
 set local role service_role;
 select isnt(
-  public.submit_demo_request('Jean Test', 'Jean@Exemple.test', 'Exemple', 'Gérant', 'btp', null, null, null, 'iphash-0123456789abcdef'),
+  public.submit_demo_request('Jean Test', 'Jean@Exemple.test', 'Exemple', 'Gérant', 'btp', null, null, null, 'iphash-0123456789abcdef', 'emailhash-0123456789abcdef-' || md5(random()::text)),
   null, 'Le serveur enregistre une demande'
 );
 select is((select count(*)::int from public.demo_requests where email = 'jean@exemple.test'), 1, 'L''e-mail est normalisé (minuscules)');
-select lives_ok($$select public.submit_demo_request('Jean Test', 'jean2@exemple.test', 'Exemple', 'Gérant', 'btp', null, null, null, 'iphash-0123456789abcdef')$$, '2e demande, même IP');
-select lives_ok($$select public.submit_demo_request('Jean Test', 'jean3@exemple.test', 'Exemple', 'Gérant', 'btp', null, null, null, 'iphash-0123456789abcdef')$$, '3e demande, même IP');
+select lives_ok($$select public.submit_demo_request('Jean Test', 'jean2@exemple.test', 'Exemple', 'Gérant', 'btp', null, null, null, 'iphash-0123456789abcdef', 'emailhash-0123456789abcdef-' || md5(random()::text))$$, '2e demande, même IP');
+select lives_ok($$select public.submit_demo_request('Jean Test', 'jean3@exemple.test', 'Exemple', 'Gérant', 'btp', null, null, null, 'iphash-0123456789abcdef', 'emailhash-0123456789abcdef-' || md5(random()::text))$$, '3e demande, même IP');
 select throws_ok(
-  $$select public.submit_demo_request('Jean Test', 'jean4@exemple.test', 'Exemple', 'Gérant', 'btp', null, null, null, 'iphash-0123456789abcdef')$$,
+  $$select public.submit_demo_request('Jean Test', 'jean4@exemple.test', 'Exemple', 'Gérant', 'btp', null, null, null, 'iphash-0123456789abcdef', 'emailhash-0123456789abcdef-' || md5(random()::text))$$,
   'P0001', 'rate_limited', 'La 4e demande depuis la même IP dans l''heure est refusée'
 );
 

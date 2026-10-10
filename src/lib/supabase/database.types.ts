@@ -116,7 +116,6 @@ export type Database = {
           id: string;
           legal_identifier: string | null;
           name: string;
-          notes: string | null;
           sector: string | null;
           size: string | null;
           status: Database["public"]["Enums"]["company_status"];
@@ -128,7 +127,6 @@ export type Database = {
           id?: string;
           legal_identifier?: string | null;
           name: string;
-          notes?: string | null;
           sector?: string | null;
           size?: string | null;
           status?: Database["public"]["Enums"]["company_status"];
@@ -139,13 +137,39 @@ export type Database = {
           id?: string;
           legal_identifier?: string | null;
           name?: string;
-          notes?: string | null;
           sector?: string | null;
           size?: string | null;
           status?: Database["public"]["Enums"]["company_status"];
           updated_at?: string;
         };
         Relationships: [];
+      };
+      company_internal_notes: {
+        Row: {
+          company_id: string;
+          notes: string;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          company_id: string;
+          notes: string;
+          updated_at?: string;
+        };
+        Update: {
+          company_id?: string;
+          notes?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "company_internal_notes_company_id_fkey";
+            columns: ["company_id"];
+            isOneToOne: true;
+            referencedRelation: "companies";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       company_members: {
         Row: {
@@ -765,9 +789,14 @@ export type Database = {
         Args: Record<PropertyKey, never>;
         Returns: boolean;
       };
+      purge_expired_data: { Args: Record<PropertyKey, never>; Returns: Json };
       purge_rate_limit_events: {
         Args: Record<PropertyKey, never>;
         Returns: number;
+      };
+      record_signup_terms_acceptance: {
+        Args: { p_user_id: string; p_version: string };
+        Returns: undefined;
       };
       request_account_deletion: {
         Args: Record<PropertyKey, never>;
@@ -778,6 +807,7 @@ export type Database = {
           p_company_name: string;
           p_company_size: string;
           p_email: string;
+          p_email_hash: string;
           p_full_name: string;
           p_ip_hash: string;
           p_job_title: string;

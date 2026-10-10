@@ -18,6 +18,7 @@ export default defineConfig({
     baseURL: `http://localhost:${port}`,
     locale: "fr-FR",
     trace: "retain-on-failure",
+    screenshot: "only-on-failure",
   },
   projects: [
     { name: "desktop", use: { ...devices["Desktop Chrome"], launchOptions: { executablePath } } },

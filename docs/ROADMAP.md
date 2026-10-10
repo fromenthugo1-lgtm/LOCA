@@ -9,7 +9,7 @@
 | 3 | Pages commerciales (demande de démo, pages juridiques, formules) | Terminée |
 | 4 | Authentification (inscription, connexion, mot de passe oublié, états de compte) | Terminée |
 | 5 | Données et sécurité (schéma, RLS, migrations, tests pgTAP) | Terminée |
-| 6 | Administration initiale (démos, comptes, formules, contenus, RGPD) | À faire |
+| 6 | Administration initiale (démos, comptes, formules, contenus, RGPD) | Terminée |
 | 7 | Vérification (pages, responsive, droits, accessibilité, audit « ne fait pas IA ») | À faire |
 | 8 | Documentation (README, .env.example, RGPD, rapport final) | À faire |
 

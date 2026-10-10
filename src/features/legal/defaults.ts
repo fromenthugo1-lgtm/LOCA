@@ -53,7 +53,7 @@ Contact pour vos données personnelles : [À COMPLÉTER : adresse e-mail dédié
 
 **Compte utilisateur.** Adresse e-mail, mot de passe (stocké sous forme chiffrée par notre prestataire d'authentification, jamais lisible par nous), nom si vous l'indiquez, entreprise et rôle, date d'acceptation des conditions d'utilisation. Finalité : vous donner accès au service. Base juridique : exécution du contrat [À COMPLÉTER : à valider]. Durée : pendant la durée du compte, puis suppression ou anonymisation selon la procédure décrite ci-dessous [À COMPLÉTER : à valider].
 
-**Sécurité.** Pour limiter les abus, une empreinte non réversible de votre adresse IP est conservée quelques jours. Votre adresse IP n'est jamais enregistrée en clair.
+**Sécurité.** Pour limiter les abus, une empreinte non réversible de votre adresse IP est conservée trente jours au plus. Votre adresse IP n'est jamais enregistrée en clair.
 
 ## Destinataires
 

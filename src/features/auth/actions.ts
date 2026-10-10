@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { routes, safeInternalPath } from "@/config/routes";
 import { getSiteUrl } from "@/lib/env";
+import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCurrentTermsVersion } from "@/features/legal/queries";
 import { authLimits, checkLimits } from "./rate-limit";
@@ -74,15 +75,10 @@ export async function signUp(_prev: AuthFormState, formData: FormData): Promise<
   const limit = await checkLimits([{ limit: authLimits.signUpByIp, key: "ip" }]);
   if (limit !== "allowed") return limitedOrUnavailable(limit);
 
-  // La version des CGU acceptée est celle en vigueur, lue côté serveur (jamais envoyée par le navigateur).
-  const termsVersion = await getCurrentTermsVersion();
-  const { error } = await supabase.auth.signUp({
+  const { data, error } = await supabase.auth.signUp({
     email: parsed.data.email,
     password: parsed.data.password,
-    options: {
-      emailRedirectTo: `${getSiteUrl()}${routes.account}`,
-      data: { terms_version: termsVersion },
-    },
+    options: { emailRedirectTo: `${getSiteUrl()}${routes.account}` },
   });
   if (error) {
     if (error.code === "weak_password") return { status: "invalid", fieldErrors: { password: msg.weakPassword } };
@@ -90,6 +86,18 @@ export async function signUp(_prev: AuthFormState, formData: FormData): Promise<
     // Une adresse déjà inscrite n'est pas signalée (Supabase renvoie un succès factice).
     console.error("[auth] inscription impossible", { code: error.code });
     return { status: "error", message: msg.technical };
+  }
+
+  // Case CGU cochée : acceptation enregistrée par le serveur, avec la version en vigueur lue
+  // côté serveur. Si l'adresse était déjà inscrite, l'identifiant renvoyé est factice et
+  // rien n'est modifié. En cas d'échec, l'acceptation sera redemandée à la première connexion.
+  const service = createSupabaseAdminClient();
+  if (service && data.user) {
+    const { error: termsError } = await service.rpc("record_signup_terms_acceptance", {
+      p_user_id: data.user.id,
+      p_version: await getCurrentTermsVersion(),
+    });
+    if (termsError) console.error("[auth] enregistrement des CGU impossible", { code: termsError.code });
   }
   redirect(routes.checkEmail);
 }
@@ -171,4 +179,27 @@ export async function requestAccountDeletion(): Promise<void> {
     redirect(`${routes.account}?erreur=suppression`);
   }
   redirect(`${routes.account}?suppression=demandee`);
+}
+
+const emailLinkTypes = ["email", "signup", "recovery", "email_change", "invite"] as const;
+
+/**
+ * Validation d'un lien reçu par e-mail, déclenchée par un clic (POST) et non par la simple
+ * ouverture du lien : un logiciel qui pré-ouvre les liens ne consomme pas le jeton, et un
+ * tiers ne peut pas connecter quelqu'un à son insu sur un autre compte.
+ */
+export async function confirmEmailLink(formData: FormData): Promise<void> {
+  const tokenHash = String(formData.get("token_hash") ?? "");
+  const type = String(formData.get("type") ?? "");
+  const next = safeInternalPath(String(formData.get("next") ?? ""), routes.account);
+  const failure = `${routes.signIn}?lien=invalide`;
+
+  const validType = emailLinkTypes.find((t) => t === type);
+  if (!tokenHash || tokenHash.length > 200 || !validType) redirect(failure);
+
+  const supabase = await createSupabaseServerClient();
+  if (!supabase) redirect(failure);
+  const { error } = await supabase.auth.verifyOtp({ type: validType, token_hash: tokenHash });
+  if (error) redirect(failure);
+  redirect(next);
 }

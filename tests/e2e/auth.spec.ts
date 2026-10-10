@@ -1,5 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
-import { confirmPathFrom, makeTestCredential, sql, uniqueEmail, waitForEmailHtml } from "./helpers";
+import { makeTestCredential, openEmailLink, sql, uniqueEmail, waitForEmailHtml } from "./helpers";
 
 test.beforeEach(() => {
   sql("delete from public.rate_limit_events where action like 'sign%' or action like 'reset%'");
@@ -40,7 +40,7 @@ test.describe("inscription et connexion", () => {
 
     const html = await waitForEmailHtml(email, "Confirmez votre adresse");
     expect(html).toContain("Confirmez votre adresse e-mail");
-    await page.goto(confirmPathFrom(html));
+    await openEmailLink(page, html);
     await expect(page).toHaveURL(/\/espace/);
     await expect(page.getByRole("heading", { name: "Votre compte est créé, réservez une démonstration" })).toBeVisible();
 
@@ -53,16 +53,22 @@ test.describe("inscription et connexion", () => {
     await page.getByRole("button", { name: "Se connecter" }).click();
     await expect(page.getByRole("heading", { name: "Mon espace" })).toBeVisible();
 
-    // Un utilisateur standard n'accède pas à l'administration (page introuvable).
+    // Un utilisateur standard n'accède pas à l'administration : vraie 404, et aucun
+    // élément de l'administration dans la réponse.
     const res = await page.goto("/admin");
     expect(res?.status()).toBe(404);
+    const body = (await res?.text()) ?? "";
+    await expect(page.getByRole("heading", { name: "Cette page n'existe pas." })).toBeVisible();
+    for (const marker of ["Vue d'ensemble", "Demandes de démo", "Journal d'audit", "Administration"]) {
+      expect(body).not.toContain(marker);
+    }
   });
 
   test("les états de compte suivent la base", async ({ page }) => {
     const email = uniqueEmail("etats");
     const secret = makeTestCredential();
     await fillSignUp(page, email, secret);
-    await page.goto(confirmPathFrom(await waitForEmailHtml(email, "Confirmez votre adresse")));
+    await openEmailLink(page, await waitForEmailHtml(email, "Confirmez votre adresse"));
     await expect(page).toHaveURL(/\/espace/);
 
     const setStatus = (s: string) =>
@@ -102,7 +108,7 @@ test.describe("inscription et connexion", () => {
   test("mot de passe oublié : e-mail reçu, nouveau mot de passe enregistré", async ({ page }) => {
     const email = uniqueEmail("oubli");
     await fillSignUp(page, email, makeTestCredential());
-    await page.goto(confirmPathFrom(await waitForEmailHtml(email, "Confirmez votre adresse")));
+    await openEmailLink(page, await waitForEmailHtml(email, "Confirmez votre adresse"));
     await page.getByRole("button", { name: "Se déconnecter" }).click();
 
     await page.goto("/mot-de-passe-oublie");
@@ -110,7 +116,7 @@ test.describe("inscription et connexion", () => {
     await page.getByRole("button", { name: "Recevoir un lien de réinitialisation" }).click();
     await expect(page.getByText(/Si un compte existe pour cette adresse/)).toBeVisible();
 
-    await page.goto(confirmPathFrom(await waitForEmailHtml(email, "Réinitialisez votre mot de passe")));
+    await openEmailLink(page, await waitForEmailHtml(email, "Réinitialisez votre mot de passe"));
     await expect(page).toHaveURL(/\/reinitialiser-mot-de-passe/);
     const fresh = makeTestCredential();
     await page.getByLabel("Nouveau mot de passe").fill(fresh);

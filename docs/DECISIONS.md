@@ -73,3 +73,18 @@ Chaque décision : contexte, choix, conséquence. On ajoute à la fin, on ne ré
 ## D-013 · Limites de tentatives applicatives, refus si non configurées (2026-10-10)
 
 **Choix.** En plus des limites intégrées à Supabase Auth : connexion 20 par IP et 8 par e-mail par 15 minutes, inscription 5 par IP par heure, réinitialisation 5 par IP et 3 par e-mail par heure (`src/features/auth/rate-limit.ts`). Sans clé secrète ou sans `IP_HASH_SECRET`, l'action refuse au lieu de passer sans contrôle. Pour « mot de passe oublié », une limite atteinte renvoie la même réponse qu'un succès (rien n'est révélé).
+
+## D-014 · Durcissement après relecture de sécurité (2026-10-10)
+
+**Contexte.** Relecture par l'agent `relecteur-securite` ; chaque constat vérifié dans le code avant correction.
+**Choix.**
+- Redirection après connexion : chemin analysé comme le ferait le navigateur, caractères de contrôle refusés (« /\t/site.fr » contournait le filtre).
+- `is_super_admin()` exige un compte non suspendu et non anonymisé : un admin suspendu perd ses droits en base même avec un jeton valide. Un admin ne peut pas changer le statut d'un autre admin ; l'anonymisation retire le rôle.
+- `/admin` : rôle vérifié dès le proxy, vraie 404 sans aucun indice pour un non-admin (complète D-011).
+- CGU : l'acceptation n'est plus déduite des métadonnées d'inscription (modifiables par un appel direct à l'API Auth). Le serveur l'enregistre après la case cochée (`record_signup_terms_acceptance`, clé secrète) ; sinon elle est demandée à la première connexion.
+- Liens reçus par e-mail : page intermédiaire avec bouton (POST). Un lien pré-ouvert par un antivirus ne consomme plus le jeton, et personne ne peut connecter un tiers à son insu sur un autre compte.
+- E-mails hachés par HMAC côté serveur (plus de SHA-256 simple en base), aucune empreinte d'e-mail dans le journal d'audit.
+- Notes internes d'une entreprise dans `company_internal_notes`, lisible par le super_admin seul.
+- Conservation : empreinte IP des démos effacée après 30 jours, conservation des demandes comptée depuis le dernier échange, purge quotidienne planifiée (`pg_cron`, `purge_expired_data`).
+- IP lue d'abord dans les en-têtes posés par Vercel (`x-vercel-forwarded-for`, `x-real-ip`).
+**Reste ouvert (à faire par un humain, voir README).** Les limites de connexion applicatives peuvent être contournées par un appel direct à l'API Supabase Auth : activer le CAPTCHA de Supabase Auth (Cloudflare Turnstile) et vérifier les limites de débit du projet hébergé. Un SMTP dédié est nécessaire avant la production (le service intégré est plafonné).
